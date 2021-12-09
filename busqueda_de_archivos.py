@@ -7,6 +7,7 @@ from PyQt5 import QtCore
 from numpy import add, promote_types
 import re
 from termcolor import colored
+import subprocess
 #res =  False
 class App(QWidget):
 
@@ -49,29 +50,47 @@ class App(QWidget):
         #self.openFileNameDialog()
         #self.openFileNamesDialog()
         #self.saveFileDialog()
-        listado = []
+        self.listado = []
         if  self.ask == 'n':
             addrr = self.showAddress()
             if addrr:
                 self.salvar(addrr)
         else:
             addrr= self.path
-        self.busquedaArchivo(True, addrr+'/')
+        self.listado = self.busquedaArchivo(True, addrr+'/')
+        self.seleccionar_archivo(self.listado, addrr)
+        #print (self.listado)
             #self.show()
 
     def busquedaArchivo(self, condicion, direccion):
-        BUSQUEDA = 'P'
+        BUSQUEDA = ''
         pa = BUSQUEDA+'.*.pdf'
         pattern  = re.compile(pa, re.I)
-
+        lista = []
         if condicion == True:
             for filename in os.listdir(direccion):
                 res =re.match(pattern, str(filename) )
                 if res:
                     #lista.append([lineas, str(cant)])
                     print(colored(filename))
-                    os.system(direccion+'/'+filename)
-                #print (filename)
+                    lista.append(filename)
+                    #os.system(direccion+'/'+filename)
+        return lista
+                    #print (filename)
+
+    def seleccionar_archivo(self, lista, direccion):
+        contador = 0
+        print('Los archivosencontrados mas parecidos son los siguientes: \n')
+        for name in lista:
+            contador+=1
+            print(str(contador)+' - ' + name)
+
+        resp = int(input('Cual de ellos desea abrir?, indique el numero que le corresponde \n'))
+        os.system('\"'+ direccion+'/'+str(lista[resp-1])+'\"')
+        #os.system('\"'+direccion+'/'+'competitive programming handbook.pdf\"')
+        #subprocess.call(direccion+'/'+lista[resp-1])
+        #print(lista[resp-1])
+
 
     def salvar(self, addr):
             shelfFile = shelve.open('dir')
