@@ -1,5 +1,5 @@
 import shelve
-
+import os
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
 from PyQt5.QtGui import QIcon
@@ -17,6 +17,7 @@ class App(QWidget):
         self.top = 10
         self.width = 640
         self.height = 480
+        self.path = ''
         self.res= False
         self.ask=''
         self.initUI()
@@ -46,15 +47,20 @@ class App(QWidget):
         #self.openFileNameDialog()
         #self.openFileNamesDialog()
         #self.saveFileDialog()
+
         if  self.ask == 'n':
             addrr = self.showAddress()
             if addrr:
                 self.salvar(addrr)
+        else:
+            addrr= self.path
+        self.busquedaArchivo(True, addrr)
             #self.show()
 
-    def busquedaArchivo(self, condicion):
+    def busquedaArchivo(self, condicion, direccion):
         if condicion == True:
-            pass
+            for filename in os.listdir(direccion):
+                print (filename)
 
     def salvar(self, addr):
             shelfFile = shelve.open('dir')
