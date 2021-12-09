@@ -5,9 +5,9 @@ from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFil
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
 from numpy import add, promote_types
-
+import re
+from termcolor import colored
 #res =  False
-
 class App(QWidget):
 
     def __init__(self):
@@ -25,6 +25,8 @@ class App(QWidget):
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        
+
         try:
             self.path = self.cargar() 
         except:
@@ -35,7 +37,7 @@ class App(QWidget):
         while t == False:
             #print(type(self.ask))
             print((self.ask))
-            self.ask = input('Desea buscar en la misma direccion o desea cambiar carpeta   y/n ?\n')
+            self.ask = input(colored('Desea buscar en la misma direccion o desea cambiar carpeta   y/n ?\n', 'red', attrs=['reverse', 'blink']))
 
             if self.ask == 'y':
                 self.res = True
@@ -47,20 +49,29 @@ class App(QWidget):
         #self.openFileNameDialog()
         #self.openFileNamesDialog()
         #self.saveFileDialog()
-
+        listado = []
         if  self.ask == 'n':
             addrr = self.showAddress()
             if addrr:
                 self.salvar(addrr)
         else:
             addrr= self.path
-        self.busquedaArchivo(True, addrr)
+        self.busquedaArchivo(True, addrr+'/')
             #self.show()
 
     def busquedaArchivo(self, condicion, direccion):
+        BUSQUEDA = 'P'
+        pa = BUSQUEDA+'.*.pdf'
+        pattern  = re.compile(pa, re.I)
+
         if condicion == True:
             for filename in os.listdir(direccion):
-                print (filename)
+                res =re.match(pattern, str(filename) )
+                if res:
+                    #lista.append([lineas, str(cant)])
+                    print(colored(filename))
+                    os.system(direccion+'/'+filename)
+                #print (filename)
 
     def salvar(self, addr):
             shelfFile = shelve.open('dir')
